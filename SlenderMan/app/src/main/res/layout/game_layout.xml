@@ -15,18 +15,107 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="400dp"
         android:layout_height="400dp" />
 
-    <TextView
-        android:layout_width="157dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Called"
-        android:id="@+id/text"
-        android:layout_gravity="center_horizontal"
-        android:textSize="50dp"
-        android:textStyle="bold"/>
+        android:orientation="horizontal"
+        android:layout_alignBottom="@id/map">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/zoom_ll">
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:text="+"
+                android:id="@+id/zoom_in"
+                android:onClick="zoomInPressed"/>
+
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:text="-"
+                android:id="@+id/zoom_out"
+                android:onClick="zoomOutPressed"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_alignEnd="@id/zoom_ll"
+            >
+
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/move_left"
+                android:onClick="moveLeft"
+                android:cropToPadding="false"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/move_up"
+                    android:layout_gravity="center_vertical"
+                    android:onClick="moveUp"
+                    android:cropToPadding="false"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    />
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/move_down"
+                    android:layout_gravity="center_vertical"
+                    android:onClick="moveDown"
+                    android:cropToPadding="false"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    />
+
+                </LinearLayout>
+
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/move_right"
+                android:onClick="moveRight"
+                android:layout_gravity="center_vertical"
+                android:cropToPadding="false"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+        </RelativeLayout>
 </LinearLayout>
