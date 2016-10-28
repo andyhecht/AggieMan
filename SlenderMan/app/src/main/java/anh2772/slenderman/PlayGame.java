@@ -10,12 +10,15 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.FusedLocationProviderApi;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by AndyHecht on 10/23/2016.
@@ -37,6 +42,7 @@ import java.util.Random;
 public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
 
     TextView text;
+    Integer collectedNotesCount;
 
     private Marker uMarker;
     private Marker sMarker;
@@ -44,6 +50,51 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
     private Float zoom;
 
     protected GoogleMap gMap;
+
+    private Boolean pressed = false;
+
+    // http://stackoverflow.com/questions/10511423/android-repeat-action-on-pressing-and-holding-a-button
+    private View.OnTouchListener tl = new View.OnTouchListener() {
+
+        Handler h = new Handler();
+        View view;
+        private Runnable r = new Runnable() {
+            @Override public void run() {
+                switch (view.getId()) {
+                    case R.id.move_up:
+                        moveUp(view);
+                        break;
+                    case R.id.move_down:
+                        moveDown(view);
+                        break;
+                    case R.id.move_left:
+                        moveLeft(view);
+                        break;
+                    case R.id.move_right:
+                        moveRight(view);
+                        break;
+                    default:
+                        break;
+                }
+                h.postDelayed(this, 100);
+            }
+        };
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            this.view = v;
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                if (h != null) return true;
+                h = new Handler();
+                h.postDelayed(r, 100);
+            } else{
+                if (h == null) return true;
+                h.removeCallbacks(r);
+                h = null;
+            }
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +105,16 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        sDist = 0.001;
+        sDist = 0.005;
         this.zoom = 18.0f;
+        collectedNotesCount = 0;
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         text = (TextView)findViewById(R.id.text);
+
+        setMovementTouchListeners();
 
         // Get the Intent that called for this Activity to open
         Intent activityThatCalled = getIntent();
@@ -94,14 +148,11 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        double lat = latLng.latitude;
-        double lon = latLng.longitude;
-
-        String positionText = "(" + lat + ", " + lon + ")";
-
-//        MarkerOptions marker = new MarkerOptions().position(latLng).title(positionText);
-//        gMap.addMarker(marker);
-        uMarker.setPosition(latLng);
+//        double lat = latLng.latitude;
+//        double lon = latLng.longitude;
+//        String positionText = "(" + lat + ", " + lon + ")";
+//        uMarker.setPosition(latLng);
+        System.out.println("Long clicking.");
     }
 
     @Override
@@ -144,8 +195,11 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        marker.setVisible(false);
-
+        if(!this.uMarker.equals(marker) && !this.sMarker.equals(marker)) {
+            marker.setVisible(false);
+            collectedNotesCount += 1;
+            Toast.makeText(this, "Note collected.", Toast.LENGTH_SHORT);
+        }
         return true;
     }
 
@@ -204,6 +258,7 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         this.uMarker.setPosition(loc);
         this.sMarker.setPosition(sLoc);
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, this.zoom));
+
     }
 
     private void randomizeSlenderMan(){
@@ -217,7 +272,20 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         sDist += ((rand.nextInt(20))*sign)*0.000003;
         if(sDist < 0) {
             sDist = 0.0;
+            Toast.makeText(this, "You died...", Toast.LENGTH_LONG).show();
+            finish();
         }
         System.out.println("sDist = " + sDist);
+    }
+
+    private void setMovementTouchListeners(){
+        ImageView moveUpBut = (ImageView) findViewById(R.id.move_up);
+        ImageView moveDownBut = (ImageView) findViewById(R.id.move_down);
+        ImageView moveLeftBut = (ImageView) findViewById(R.id.move_left);
+        ImageView moveRightBut = (ImageView) findViewById(R.id.move_right);
+        moveUpBut.setOnTouchListener(tl);
+        moveDownBut.setOnTouchListener(tl);
+        moveLeftBut.setOnTouchListener(tl);
+        moveRightBut.setOnTouchListener(tl);
     }
 }

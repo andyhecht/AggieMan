@@ -65,11 +65,12 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/move_left"
-                android:onClick="moveLeft"
+                android:id="@+id/move_left"
                 android:cropToPadding="false"
                 android:scaleType="fitXY"
                 android:adjustViewBounds="true"
                 android:background="@android:color/transparent"
+                android:alpha="0.8"
                 />
 
             <LinearLayout
@@ -82,12 +83,13 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/move_up"
+                    android:id="@+id/move_up"
                     android:layout_gravity="center_vertical"
-                    android:onClick="moveUp"
                     android:cropToPadding="false"
                     android:scaleType="fitXY"
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
+                    android:alpha="0.8"
                     />
 
                 <ImageButton
@@ -95,11 +97,12 @@
                     android:layout_height="50dp"
                     android:src="@drawable/move_down"
                     android:layout_gravity="center_vertical"
-                    android:onClick="moveDown"
+                    android:id="@+id/move_down"
                     android:cropToPadding="false"
                     android:scaleType="fitXY"
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
+                    android:alpha="0.8"
                     />
 
                 </LinearLayout>
@@ -108,12 +111,13 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/move_right"
-                android:onClick="moveRight"
+                android:id="@+id/move_right"
                 android:layout_gravity="center_vertical"
                 android:cropToPadding="false"
                 android:scaleType="fitXY"
                 android:adjustViewBounds="true"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:alpha="0.8"/>
 
         </LinearLayout>
     </RelativeLayout>
