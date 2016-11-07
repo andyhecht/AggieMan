@@ -389,11 +389,12 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         if(getDistanceBetweenItandU(sMarker) < 0.0001 || sDist < 0) {
             sDist = 0.0;
 
-
-
             i = 0;
             t = new Timer();
             scheduleTimer(t);
+        } else if(getDistanceBetweenItandU(sMarker) < 0.001){
+            t = new Timer();
+            signalEnemyIsNear(t);
         }
 
         System.out.println("sDist = " + sDist);
@@ -419,6 +420,41 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
                             timer.purge();
                             Toast.makeText(getApplicationContext(), "You died...", Toast.LENGTH_LONG).show();
                             endGame();
+                            return;
+                        }
+                        if(i%2 == 0) {
+                            staticImage.setBackgroundColor(Color.WHITE);
+                        }else{
+                            staticImage.setBackgroundColor(Color.BLACK);
+                        }
+                        i++;
+                    }
+                });
+            }
+        }, 80,80);
+    }
+
+    private void signalEnemyIsNear(final Timer timer){
+        i = 0;
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if( i == 0) {
+                            player.stop();
+                            player = MediaPlayer.create(getApplicationContext(), R.raw.staticnoise);
+                            player.setLooping(false);
+                            player.start();
+                        }
+                        if (i >= 10) {
+                            player.stop();
+                            timer.cancel();
+                            timer.purge();
+                            staticImage.setBackgroundColor(Color.TRANSPARENT);
+                            Toast.makeText(getApplicationContext(), "RUN!", Toast.LENGTH_LONG).show();
                             return;
                         }
                         if(i%2 == 0) {
