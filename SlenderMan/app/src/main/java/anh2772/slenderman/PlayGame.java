@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,10 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
     private Double sDist; // distance slenderman is from user
     private Float zoom; // current zoom on googlemap
     protected GoogleMap gMap; // google map
+    private Fog fog;
+    private Integer direction;
+    private Boolean changeDirection;
+    private Marker[] notes;
 
     // runnable for slenderman movement - moves random position every 2 seconds
     private Runnable sR = new Runnable() {
@@ -114,6 +119,12 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         text = (TextView)findViewById(R.id.text);
         sHandler = new Handler();
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        this.direction = 0;
+        this.changeDirection = true;
+        notes = new Marker[8];
+
+        this.fog = (Fog) findViewById(R.id.fog);
+        this.fog.invalidate();
 
         // create map
         mapFragment.getMapAsync(this);
@@ -168,6 +179,9 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
 
         this.gMap = googleMap;
 
+        this.gMap.getUiSettings().setScrollGesturesEnabled(false);
+        this.gMap.getUiSettings().setZoomGesturesEnabled(false);
+
         // create listeners for map
         this.gMap.setOnMapLongClickListener(this);
         this.gMap.setOnMarkerClickListener(this);
@@ -203,8 +217,14 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(start, this.zoom));
 
         // populate map with notes at randomized positions
-        for(int i = 0; i < 10; i++){
-            setRandomNote(0.01);
+        for(int i = 0; i < 8; i++){
+            notes[i] = setRandomNote(0.01);
+            notes[i].setVisible(false);
+        }
+
+        for(int i = 0; i < 8; i++){
+            Marker fake = setRandomNote(0.01);
+            fake.setVisible(false);
         }
 
         // start slenderman movement
@@ -220,19 +240,41 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
             Double distance = Math.pow(Math.pow(marker.getPosition().latitude - uMarker.getPosition().latitude, 2)
                     + Math.pow(marker.getPosition().longitude - uMarker.getPosition().longitude, 2), 0.5);
 
+            Boolean real = false;
+
+            for(int i = 0; i < notes.length; i++){
+                if(notes[i].equals(marker)){
+                    real = true;
+                    break;
+                }
+            }
 
             // true if note is close enough to collect
-            if(distance <= 0.000213 ) {
-
+            if(real && distance <= 0.000413 ) {
                 // remove note update counter
                 marker.setVisible(false);
                 collectedNotesCount += 1;
-                Toast.makeText(this, "Note collected.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "NOTE COLLECTED!", Toast.LENGTH_SHORT).show();
 
                 // if all notes collected, end game - you win
                 if(collectedNotesCount == 10){
-                    Toast.makeText(this, "You win!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
                     endGame();
+                }
+            } else if(distance <= 0.000413){
+                Integer note = 0;
+                for(int i = 0; i < notes.length; i++) {
+                    if(marker.getPosition().latitude == notes[i].getPosition().latitude &&
+                            marker.getPosition().longitude == notes[i].getPosition().longitude){
+                        real = true;
+                        note = i;
+                        break;
+                    }
+                }
+                marker.setVisible(false);
+                if(real){
+                    notes[note].setVisible(true);
+                    Toast.makeText(this, "FOUND NOTE!", Toast.LENGTH_SHORT).show();
                 }
             } else{
                 // note is too far away - let them know how far away it is.
@@ -271,23 +313,37 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         if (direction < 0 || direction >= 4){
             return;
         }
-        else if (direction == 0){
+
+        if(this.direction != direction){
+            changeDirection = true;
+        }
+
+        if (direction == 0){
             // left
+            this.direction = 0;
             longitude = -0.00005;
         }
         else if (direction == 1){
             // up
+            this.direction = 1;
             latitude = 0.00005;
         }
         else if (direction == 2){
             // right
+            this.direction = 2;
             longitude = 0.00005;
         }
         else {
             // down
+            this.direction = 3;
             latitude = -0.00005;
         }
 
+        if(changeDirection){
+            updateFog(this.direction);
+            randomizeSlenderMan();
+            changeDirection = false;
+        }
 
         // update User position to new position
         LatLng loc = new LatLng(uMarker.getPosition().latitude + latitude, uMarker.getPosition().longitude + longitude);
@@ -343,7 +399,7 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
     }
 
     // will place a note randomly on the map given limit (the distance from the user)
-    private void setRandomNote(Double limit){
+    private Marker setRandomNote(Double limit){
         Random rand = new Random();
 
         // randomizes add or subtract from user position
@@ -358,9 +414,12 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         Double latitude = uMarker.getPosition().latitude + rand.nextDouble()*limit*sign;
         Double longitude = uMarker.getPosition().longitude + rand.nextDouble()*limit*sign;
 
-        // add note to map
         gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon
-                (BitmapDescriptorFactory.fromBitmap(resizeIcon("notes", 50, 50))));
+                (BitmapDescriptorFactory.fromBitmap(resizeIcon("circle", 100, 100))));
+
+        // add note to map
+        return gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon
+                (BitmapDescriptorFactory.fromBitmap(resizeIcon("notes", 75, 75))));
     }
 
     // calculates distance from user to marker m.
@@ -380,5 +439,10 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
 
         // end intent/activity
         finish();
+    }
+
+    private void updateFog(Integer orientation){
+        this.fog.updateFogPosition(orientation);
+        this.fog.invalidate();
     }
 }
