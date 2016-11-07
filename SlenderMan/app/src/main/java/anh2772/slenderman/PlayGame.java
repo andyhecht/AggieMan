@@ -3,6 +3,7 @@ package anh2772.slenderman;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -29,6 +30,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by AndyHecht on 10/23/2016.
@@ -48,6 +51,9 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
     private Integer direction;
     private Boolean changeDirection;
     private Marker[] notes;
+    private int i;
+    private Timer t;
+    private ImageView staticImage;
 
     // runnable for slenderman movement - moves random position every 2 seconds
     private Runnable sR = new Runnable() {
@@ -125,6 +131,9 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
 
         this.fog = (Fog) findViewById(R.id.fog);
         this.fog.invalidate();
+
+        //initialize imageView as transparent
+        staticImage = (ImageView) findViewById(R.id.staticImage);
 
         // create map
         mapFragment.getMapAsync(this);
@@ -379,11 +388,49 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         // if slenderman is close enough to user, kill user and end game
         if(getDistanceBetweenItandU(sMarker) < 0.0001 || sDist < 0) {
             sDist = 0.0;
-            Toast.makeText(this, "You died...", Toast.LENGTH_LONG).show();
-            endGame();
+
+
+
+            i = 0;
+            t = new Timer();
+            scheduleTimer(t);
         }
 
         System.out.println("sDist = " + sDist);
+    }
+
+    private void scheduleTimer(final Timer timer){
+        i = 0;
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if( i == 5) {
+                            player.stop();
+                            player = MediaPlayer.create(getApplicationContext(), R.raw.scream);
+                            player.setLooping(false);
+                            player.start();
+                        }
+                        if (i >= 30) {
+                            timer.cancel();
+                            timer.purge();
+                            Toast.makeText(getApplicationContext(), "You died...", Toast.LENGTH_LONG).show();
+                            endGame();
+                            return;
+                        }
+                        if(i%2 == 0) {
+                            staticImage.setBackgroundColor(Color.WHITE);
+                        }else{
+                            staticImage.setBackgroundColor(Color.BLACK);
+                        }
+                        i++;
+                    }
+                });
+            }
+        }, 80,80);
     }
 
     // set up touch listeners of the movement buttons
@@ -431,7 +478,7 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
     // end the game, you're finished, hasta luego.
     public void endGame(){
         // stop slenderman movement
-        sHandler.removeCallbacks(sR);
+        if(sHandler != null) sHandler.removeCallbacks(sR);
         sHandler = null;
 
         // stop music
