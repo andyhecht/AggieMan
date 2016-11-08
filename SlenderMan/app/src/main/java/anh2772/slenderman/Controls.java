@@ -14,6 +14,10 @@ import java.util.Timer;
 /**
  * Created by jason on 11/7/2016.
  */
+
+/**
+ * Controls tools User has in game. - Flashlight.
+ */
 public class Controls {
 
     private Activity a;

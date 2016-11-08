@@ -1,15 +1,11 @@
 package anh2772.slenderman;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Random;
 import java.util.Timer;
@@ -17,12 +13,12 @@ import java.util.Timer;
 /**
  * Created by jason on 11/8/2016.
  */
-public class SlenderMan {
 
-    private Activity a;
-    private GoogleMap gMap;
-    private Marker sMarker; // marker of slenderman - has position of slenderman
-    private LatLng p;
+/**
+ * SlenderMan Player - controls and metadata of SlenderMan
+ */
+public class SlenderMan extends Player{
+
     private Double sDist; // distance slenderman is from user
     private User user;
     private MusicManager mm;
@@ -39,35 +35,15 @@ public class SlenderMan {
     };
 
     public SlenderMan(Activity a, GoogleMap gMap, LatLng p, Game g){
-        this.a = a;
-        this.gMap = gMap;
-        this.p = p;
+        super(a, gMap, p, g);
         this.sDist = 0.02;
+        createMarker("Marker of slenderman", "slenderman");
         sHandler = new Handler();
-        createMarker();
-    }
-
-    private void createMarker(){
-        this.sMarker = gMap.addMarker(new MarkerOptions().position(p).title
-                ("Marker of slenderman").icon(BitmapDescriptorFactory.fromBitmap
-                (resizeIcon("slenderman", 100, 100))));
     }
 
     public void setManagers(User user, MusicManager mm){
         this.user = user;
         this.mm = mm;
-    }
-
-    // resize marker icons so they are uniform size
-    // http://stackoverflow.com/questions/14851641/change-marker-size-in-google-maps-api-v2
-    private Bitmap resizeIcon(String iconName,int width, int height){
-        Bitmap imageBitmap = BitmapFactory.decodeResource(this.a.getResources(),
-                this.a.getResources().getIdentifier(iconName, "drawable", this.a.getPackageName()));
-        return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
-    }
-
-    public Marker getMarker(){
-        return sMarker;
     }
 
     // randomize slenderman's position - but slowly randomize slenderman closer to the user
@@ -93,15 +69,15 @@ public class SlenderMan {
         LatLng sLoc = new LatLng(latitude, longitude);
 
         // update position of slenderman
-        sMarker.setPosition(sLoc);
+        this.m.setPosition(sLoc);
 
         // if slenderman is close enough to user, kill user and end game
-        if(getDistanceBetweenItandU(sMarker) < 0.0001 || sDist < 0) {
+        if(getDistanceBetweenItandU(this.m) < 0.0001 || sDist < 0) {
             sDist = 0.0;
 
             endGame();
 
-        } else if(getDistanceBetweenItandU(sMarker) < 0.001){
+        } else if(getDistanceBetweenItandU(this.m) < 0.001){
             this.mm.startStaticNoise(new Timer());
         }
 

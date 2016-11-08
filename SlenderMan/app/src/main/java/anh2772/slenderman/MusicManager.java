@@ -13,6 +13,10 @@ import java.util.TimerTask;
 /**
  * Created by jason on 11/7/2016.
  */
+
+/**
+ * Manages music.
+ */
 public class MusicManager {
 
     private MediaPlayer player; // music player for the slenderman music

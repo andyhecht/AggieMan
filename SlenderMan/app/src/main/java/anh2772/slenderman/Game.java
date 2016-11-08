@@ -96,6 +96,7 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
         this.gMap.setOnMarkerClickListener(this);
         this.gMap.setMyLocationEnabled(true);
 
+        // for tracking the movement of the user with their phone GPS.
         // http://stackoverflow.com/questions/13756261/how-to-get-the-current-location-in-google-maps-android-api-v2
 //        GoogleMap.OnMyLocationChangeListener locCL = new GoogleMap.OnMyLocationChangeListener() {
 //            @Override
@@ -121,8 +122,10 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
         this.user = new User(this, this.gMap, start, this);
         this.sm = new SlenderMan(this, this.gMap, slenderPos, this);
 
+        // add user tools in game
         this.c = new Controls(this);
 
+        // add players' game dependencies
         this.user.setManagers(this.sm, this.c);
         this.sm.setManagers(this.user, this.mm);
 
@@ -130,6 +133,7 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
         this.notes = new Notes(this, this.gMap, this.user.getMarker(), this.sm.getMarker());
         this.notes.generateNotes();
 
+        // start slenderman movement
         this.sm.startHandler();
     }
 

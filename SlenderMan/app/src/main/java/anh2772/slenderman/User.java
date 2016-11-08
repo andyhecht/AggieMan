@@ -1,9 +1,6 @@
 package anh2772.slenderman;
 
 import android.app.Activity;
-import android.app.Application;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,25 +8,21 @@ import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by jason on 11/7/2016.
  */
-public class User{
 
-    private Activity a;
-    private GoogleMap gMap;
-    private LatLng p;
-    private Marker uMarker; // marker of the user - has position of user
+/**
+ * User Player - controls and metadata of User
+ */
+public class User extends Player{
+
     private Float zoom; // current zoom on googlemap
     private Integer direction;
     private Boolean changeDirection;
     private Controls c;
-    private Game g;
     private SlenderMan sm;
 
     // when user movement button held down, move every .1 second until user releases button
@@ -79,38 +72,22 @@ public class User{
     };
 
     public User(Activity a, GoogleMap gMap, LatLng p, Game g){
-        this.a = a;
-        this.gMap = gMap;
-        this.zoom = 18.0f;
-        this.p = p;
+        super(a, gMap, p, g);
         this.direction = 0;
+        this.zoom = 18.0f;
         this.changeDirection = true;
-        this.g = g;
-        createMarker();
-    }
 
-    public Marker getMarker(){
-        return this.uMarker;
-    }
-
-    public void createMarker(){
-
-        this.uMarker = gMap.addMarker(new MarkerOptions().position(p).title
-                ("Marker in Austin").icon(BitmapDescriptorFactory.fromBitmap
-                (resizeIcon("person", 100, 100))));
+        createMarker("Marker in Austin", "person");
         gMap.animateCamera(CameraUpdateFactory.newLatLngZoom
-                (this.uMarker.getPosition(), this.zoom));
+                (this.m.getPosition(), this.zoom));
 
         // set user movement buttons to listen for touches/presses
         setMovementTouchListeners();
     }
 
-    // resize marker icons so they are uniform size
-    // http://stackoverflow.com/questions/14851641/change-marker-size-in-google-maps-api-v2
-    private Bitmap resizeIcon(String iconName,int width, int height){
-        Bitmap imageBitmap = BitmapFactory.decodeResource(this.a.getResources(),
-                this.a.getResources().getIdentifier(iconName, "drawable", this.a.getPackageName()));
-        return Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+    public void setManagers(SlenderMan sm, Controls c){
+        this.c = c;
+        this.sm = sm;
     }
 
     // set up touch listeners of the movement buttons
@@ -165,14 +142,9 @@ public class User{
         }
 
         // update User position to new position
-        LatLng loc = new LatLng(this.uMarker.getPosition().latitude + latitude, this.uMarker.getPosition().longitude + longitude);
-        this.uMarker.setPosition(loc);
+        LatLng loc = new LatLng(this.m.getPosition().latitude + latitude, this.m.getPosition().longitude + longitude);
+        this.m.setPosition(loc);
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, this.zoom));
-    }
-
-    public void setManagers(SlenderMan sm, Controls c){
-        this.c = c;
-        this.sm = sm;
     }
 
     public void updateZoom(Integer zoom){
