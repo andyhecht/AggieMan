@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     //<https://pixabay.com/en/walkers-autumn-fog-man-human-mood-486583/>
     Button startGame;
     Button continueGame;
+    private boolean hasBeenStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +28,17 @@ public class MainActivity extends AppCompatActivity {
 
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                hasBeenStarted = true;
                 playGame();
             }
         });
         continueGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                playGame();
+                if(hasBeenStarted){
+                    playGame();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Please start a game.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
