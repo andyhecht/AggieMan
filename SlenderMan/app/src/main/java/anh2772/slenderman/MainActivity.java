@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                 if(hasBeenStarted){
                     playGame();
                 }else{
-                    Toast.makeText(getApplicationContext(), "Please start a game.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Please start a new game.", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void playGame(){
-        Intent intent = new Intent(getApplicationContext(),PlayGame.class);
+        Intent intent = new Intent(getApplicationContext(),Game.class);
 //        Bundle myExtras = new Bundle();
 //        myExtras.putString("callingActivity", "haaaaaaaaaaaaay");
 //        intent.putExtras(myExtras);

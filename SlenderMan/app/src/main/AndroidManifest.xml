@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PlayGame"
+        <activity android:name=".Game"
             android:label="Play Game"
             >
         </activity>
@@ -43,7 +43,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD0yvFn-PbK7hpWUQKSW0vJUd4v4jSh_l8" />
+            android:value="@string/google_maps_key" />
     </application>
 
 </manifest>
