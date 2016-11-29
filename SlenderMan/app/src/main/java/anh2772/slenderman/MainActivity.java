@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 if(hasBeenStarted){
                     playGame();
                 }else{
-                    Toast.makeText(getApplicationContext(), "Please start a new game.", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "Please start a new game.", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(getApplicationContext(),Augmented.class);
                     startActivity(intent);
                 }
