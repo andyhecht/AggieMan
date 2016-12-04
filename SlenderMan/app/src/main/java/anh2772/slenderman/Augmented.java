@@ -1,15 +1,23 @@
 package anh2772.slenderman;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,9 +28,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import android.location.LocationListener;
+import android.location.LocationManager;
+
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Random;
 import java.util.Timer;
@@ -32,9 +50,8 @@ import java.util.TimerTask;
 /**
  * Created by AndyHecht on 11/10/2016.
  */
-public class Augmented extends AppCompatActivity implements SensorEventListener {
+public class Augmented extends AppCompatActivity implements SensorEventListener, LocationListener {
 
-    //    private MusicManagerAugmented mm;
     private Camera mCamera = null;
     private CameraView mCameraView = null;
     private ImageView sman;
@@ -44,19 +61,33 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
     private int i;
     private Timer t;
     private Timer tt;
+    private Timer ttt;
     private ImageView staticImage;
     private int count = 0;
     int ii = 0;
     double time = 10000;
-    private int nextSman = 1600;
+    private int nextSman = 16000;
     private boolean showSman = false;
     private Random rr;
     private int rand;
     private Random r;
     private int random;
+    private boolean noteReady = true;
+    private LocationManager locationManager;
+    private Location startingLocation;
+    private Location currentLocation;
+    private boolean isLocationOn;
+    private boolean isGPSEnabled;
+    private boolean isNetworkEnabled;
+    private LocationListener locationListener;
 
-    // record the compass picture angle turned
-    private float currentDegree = 0f;
+
+    // The minimum distance to change Updates in meters
+    private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = (float)0.5; // 0.5 meters
+
+    // The minimum time between updates in milliseconds
+    private static final long MIN_TIME_BW_UPDATES = 1000; // 1 second
+
 
     // device sensor manager
     private SensorManager mSensorManager;
@@ -66,10 +97,14 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
      */
     private GoogleApiClient client;
 
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.augmented_layout);
+
+        isLocationOn = false;
+        currentLocation = getLocation2();
+        System.out.println("LOCATION: " + currentLocation.getLatitude() + " and " + currentLocation.getLongitude());
+        startingLocation = currentLocation;
 
         Intent activityThatCalled = getIntent();
 
@@ -77,8 +112,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
         sman.setBackgroundResource(R.drawable.slenderman);
 
         note = (ImageView) findViewById(R.id.note);
-        note.setBackgroundResource(R.drawable.notes);
-        note.setVisibility(View.INVISIBLE);
+        note.setBackgroundResource(R.drawable.notes_small);
 
         noteCount = 0;
         note.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +186,64 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    @Override
+    public void onLocationChanged(final Location location) {
+        //your code here
+        System.out.println("LOCATION CHANGED");
+        currentLocation = location;
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
+    public Location getLocation2() {
+        Location location = currentLocation;
+        try {
+            locationManager = (LocationManager) getApplicationContext()
+                    .getSystemService(Context.LOCATION_SERVICE);
+
+            // getting GPS status
+            isGPSEnabled = locationManager
+                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            // getting network status
+            isNetworkEnabled = locationManager
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            if (!isGPSEnabled && !isNetworkEnabled) {
+                // no network provider is enabled
+            } else {
+                    locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            MIN_TIME_BW_UPDATES,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                Log.d("GPS Enabled", "GPS Enabled");
+                if (locationManager != null) {
+                    isLocationOn = true;
+                    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return location;
+    }
+
     private void startStatic(final Timer timer) {
         i = 0;
 
@@ -201,21 +293,31 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
                     @Override
                     public void run() {
                         showSman = true;
-//                            System.out.println("!!! ii == time !!!");
-//                            sman.setImageAlpha(255);
-//                            sman.setVisibility(View.VISIBLE);
                         System.out.println("time elapsed:" + nextSman);
-//                            time = time + nextSman;
                     }
                 });
             }
         }, nextSman, 600000);
     }
 
+    private void noteTimer(final Timer timer) {
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        noteReady = true;
+                    }
+                });
+            }
+        }, 10000, 600000);
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
-
         // for the system's orientation sensor registered listeners
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
@@ -235,6 +337,11 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
 
+        if(isLocationOn){
+            float distance = startingLocation.distanceTo(currentLocation);
+            System.out.println("Distance: " + distance);
+        }
+
         if (noteCount == 10) {
             Toast.makeText(getApplicationContext(), "You won!", Toast.LENGTH_LONG).show();
             endGame();
@@ -242,10 +349,6 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
         }
 
         if (nextSman <= 10000) {
-//            t = new Timer();
-//            startStatic(t);
-//            player.stop();
-//            player.release();
             player = MediaPlayer.create(getApplicationContext(), R.raw.scream);
             player.setLooping(false);
             player.start();
@@ -255,14 +358,19 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
             return;
         }
 
-        if (degree >= rand && (degree <= rand + 5)) {
+        if (noteReady && (degree >= rand) && (degree <= rand + 5)) {
+            noteReady = false;
+
+            ttt.cancel();
+            ttt.purge();
+            ttt = new Timer();
+            noteTimer(ttt);
+
             note.setImageAlpha(255);
             note.setVisibility(View.VISIBLE);
         } else {
             note.setVisibility(View.INVISIBLE);
         }
-
-//        System.out.println("Random #:  " + random +  " and showSman: " + showSman);
 
         if (degree >= random && (degree <= random + 40) && showSman) {
             sman.setImageAlpha(255);
@@ -291,8 +399,6 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
         } else {
             sman.setVisibility(View.INVISIBLE);
         }
-        currentDegree = -degree;
-
     }
 
     @Override
@@ -302,15 +408,24 @@ public class Augmented extends AppCompatActivity implements SensorEventListener 
 
     public void endGame() {
         System.out.println("ended");
-        tt.cancel();
-        t.cancel();
-        tt.purge();
-        t.purge();
+        if(t != null){
+            t.cancel();
+            t.purge();
+        }
+        if(tt != null){
+            tt.cancel();
+            tt.purge();
+        }
+        if(ttt != null){
+            ttt.cancel();
+            ttt.purge();
+        }
         player.stop();
         Toast.makeText(getApplicationContext(), "GAME ENDED!", Toast.LENGTH_LONG).show();
-        // end intent/activity
-        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-        startActivity(intent);
+//        // end intent/activity
+//        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+//        startActivity(intent);
+        finish();
     }
 
     @Override
