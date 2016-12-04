@@ -34,14 +34,14 @@ public class Notes {
         this.collectedNotesCount = 0;
     }
 
-    public void generateNotes(){
+    public void generateNotes(Integer noteCount){
         // populate map with notes at randomized positions
-        for(int i = 0; i < 8; i++){
+        for(int i = 0; i < noteCount; i++){
             notes[i] = setRandomNote(0.01);
             notes[i].setVisible(false);
         }
 
-        for(int i = 0; i < 8; i++){
+        for(int i = 0; i < noteCount; i++){
             Marker fake = setRandomNote(0.01);
             fake.setVisible(false);
         }

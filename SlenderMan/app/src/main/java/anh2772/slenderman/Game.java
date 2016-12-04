@@ -30,6 +30,7 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
     private User user;
     private SlenderMan sm;
     private Controls c;
+    private Boolean easy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +49,9 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
         Intent activityThatCalled = getIntent();
 
         // Get the data that was sent
-        Bundle callingBundle = activityThatCalled.getExtras();
+        Bundle callingBundle = activityThatCalled.getBundleExtra("game");
         if( callingBundle != null ) {
-            //            String extra = callingBundle.getString("callingActivity");
-            //            text.setText(extra);
+            this.easy = callingBundle.getBoolean("easy");
         }
 
         this.mm = new MusicManager(this, this);
@@ -97,6 +97,12 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
         this.gMap.setOnMarkerClickListener(this);
         this.gMap.setMyLocationEnabled(true);
 
+        Integer noteCount = 8;
+
+        if (this.easy){
+            noteCount = 5;
+        }
+
         // for tracking the movement of the user with their phone GPS.
         // http://stackoverflow.com/questions/13756261/how-to-get-the-current-location-in-google-maps-android-api-v2
 //        GoogleMap.OnMyLocationChangeListener locCL = new GoogleMap.OnMyLocationChangeListener() {
@@ -132,7 +138,7 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
 
         // populate map with notes at randomized positions
         this.notes = new Notes(this, this.gMap, this.user.getMarker(), this.sm.getMarker());
-        this.notes.generateNotes();
+        this.notes.generateNotes(noteCount);
 
         // start slenderman movement
         this.sm.startHandler();

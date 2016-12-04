@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent();
         if (!ar) {
             intent = new Intent(getApplicationContext(), Game.class);
+            Bundle extras = new Bundle();
+            extras.putBoolean("easy", this.easy);
+            intent.putExtra("game", extras);
         }else{
             intent = new Intent(getApplicationContext(), Augmented.class);
         }
