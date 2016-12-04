@@ -44,6 +44,24 @@
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 />
+            <View android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:id="@+id/anchor"
+                android:layout_centerInParent="true"
+                />
+            <ImageView android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/person"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@id/anchor"
+                android:src="@drawable/person"
+                />
+            <ImageView android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/flashlight"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                />
         </RelativeLayout>
 
         <RelativeLayout
@@ -55,94 +73,109 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/zoom_ll"
-                android:layout_centerVertical="true">
-
-                <Button
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:text="+"
-                    android:id="@+id/zoom_in"
-                    android:onClick="zoomInPressed"/>
-
-                <Button
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:text="-"
-                    android:id="@+id/zoom_out"
-                    android:onClick="zoomOutPressed"/>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_alignEnd="@id/zoom_ll"
-                >
-
-                <ImageButton
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/move_left"
-                    android:id="@+id/move_left"
-                    android:cropToPadding="false"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/transparent"
-                    android:alpha="0.8"
-                    />
-
+                android:weightSum="4">
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:weightSum="4"
-                    >
+                    android:id="@+id/zoom_ll"
+                    android:layout_weight="1"
+                    android:gravity="center">
 
-                    <ImageButton
-                        android:layout_width="75dp"
-                        android:layout_height="0dp"
-                        android:src="@drawable/move_up"
-                        android:id="@+id/move_up"
-                        android:layout_gravity="center_horizontal"
-                        android:cropToPadding="false"
-                        android:scaleType="fitXY"
-                        android:adjustViewBounds="true"
-                        android:background="@android:color/transparent"
-                        android:alpha="0.8"
-                        android:layout_weight="2"
-                        />
+                    <Button
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:text="@string/plus"
+                        android:id="@+id/zoom_in"
+                        android:onClick="zoomInPressed"/>
 
-                    <ImageButton
-                        android:layout_width="75dp"
-                        android:layout_height="0dp"
-                        android:src="@drawable/move_down"
-                        android:layout_gravity="center_horizontal"
-                        android:id="@+id/move_down"
-                        android:cropToPadding="false"
-                        android:scaleType="fitXY"
-                        android:adjustViewBounds="true"
-                        android:background="@android:color/transparent"
-                        android:alpha="0.8"
-                        android:layout_weight="2"
-                        />
+                    <Button
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:text="@string/minus"
+                        android:id="@+id/zoom_out"
+                        android:onClick="zoomOutPressed"/>
 
-                    </LinearLayout>
-
-                <ImageButton
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:src="@drawable/move_right"
-                    android:id="@+id/move_right"
+                </LinearLayout>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:text="@string/notes"
+                    android:id="@+id/notes"
+                    android:layout_weight="1"
                     android:layout_gravity="center_vertical"
-                    android:cropToPadding="false"
-                    android:scaleType="fitXY"
-                    android:adjustViewBounds="true"
-                    android:background="@android:color/transparent"
-                    android:alpha="0.8"/>
+                    android:gravity="center"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight="2"
+                    android:gravity="center">
 
+                    <ImageButton
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/move_left"
+                        android:id="@+id/move_left"
+                        android:cropToPadding="false"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"
+                        android:background="@android:color/transparent"
+                        android:alpha="0.8"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:weightSum="4"
+                        >
+
+                        <ImageButton
+                            android:layout_width="75dp"
+                            android:layout_height="0dp"
+                            android:src="@drawable/move_up"
+                            android:id="@+id/move_up"
+                            android:layout_gravity="center_horizontal"
+                            android:cropToPadding="false"
+                            android:scaleType="fitXY"
+                            android:adjustViewBounds="true"
+                            android:background="@android:color/transparent"
+                            android:alpha="0.8"
+                            android:layout_weight="2"
+                            />
+
+                        <ImageButton
+                            android:layout_width="75dp"
+                            android:layout_height="0dp"
+                            android:src="@drawable/move_down"
+                            android:layout_gravity="center_horizontal"
+                            android:id="@+id/move_down"
+                            android:cropToPadding="false"
+                            android:scaleType="fitXY"
+                            android:adjustViewBounds="true"
+                            android:background="@android:color/transparent"
+                            android:alpha="0.8"
+                            android:layout_weight="2"
+                            />
+
+                        </LinearLayout>
+
+                    <ImageButton
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:src="@drawable/move_right"
+                        android:id="@+id/move_right"
+                        android:layout_gravity="center_vertical"
+                        android:cropToPadding="false"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"
+                        android:background="@android:color/transparent"
+                        android:alpha="0.8"/>
+
+                </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

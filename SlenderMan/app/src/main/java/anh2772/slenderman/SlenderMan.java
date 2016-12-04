@@ -102,6 +102,7 @@ public class SlenderMan extends Player{
     }
 
     private void endGame(){
+
         // stop music
         this.mm.startScreamingNoise(new Timer());
     }

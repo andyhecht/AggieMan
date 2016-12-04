@@ -1,6 +1,7 @@
 package anh2772.slenderman;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,6 +26,7 @@ public class Fog extends View {
     private Integer alpha;
     private Paint flashlightPaint;
     private Handler fHandler;
+    private Boolean started;
 
     private Runnable fR = new Runnable() {
         @Override public void run() {
@@ -52,14 +54,13 @@ public class Fog extends View {
         this.flashlightPaint.setAlpha(this.alpha);
         this.fHandler = new Handler();
         this.fHandler.postDelayed(this.fR, 2000);
-
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        this.canvas = canvas;
+
         System.out.println(dimensions[0] + " " + dimensions[1] + " " + dimensions[2] + " " + dimensions[3]);
-        this.canvas.drawRect(dimensions[0], dimensions[1], dimensions[2], dimensions[3], paint);
+        canvas.drawRect(dimensions[0], dimensions[1], dimensions[2], dimensions[3], paint);
 
         Path triangle1 = new Path();
         triangle1.setFillType(Path.FillType.EVEN_ODD);
@@ -94,6 +95,11 @@ public class Fog extends View {
         canvas.drawPath(flashlight, flashlightPaint);
 
         super.onDraw(canvas);
+
+    }
+
+    private void drawFlashlight(){
+
     }
 
     @Override
@@ -110,7 +116,6 @@ public class Fog extends View {
             updateDimensions((getWidth()/2) + 20,0,getWidth(), getHeight(),
                     new Point(0,0), new Point((getWidth()/2) + 20, 0), new Point((getWidth()/2) + 20, (getHeight()/2) - 100),
                     new Point(0,getHeight()), new Point((getWidth()/2) + 20, getHeight()), new Point((getWidth()/2) + 20, getHeight()/2));
-
         }else if (this.orientation == 1){
             // open top
             updateDimensions(0,(getHeight()/2),getWidth(), getHeight(),
@@ -121,13 +126,12 @@ public class Fog extends View {
             updateDimensions(0,0,(getWidth()/2) - 20, getHeight(),
                     new Point(getWidth(),getHeight()), new Point((getWidth()/2) - 20, getHeight()), new Point((getWidth()/2) - 20, getHeight()/2),
                     new Point(getWidth(),0), new Point((getWidth()/2) - 20, 0), new Point((getWidth()/2) - 20, (getHeight()/2) - 100));
-        }else if (this.orientation == 3){
+        }else if (this.orientation == 3) {
             // open bottom
-            updateDimensions(0,0,getWidth(), (getHeight()/2)-100,
-                    new Point(0,getHeight()), new Point(0, getHeight()/2 - 100), new Point((getWidth()/2) - 20, (getHeight()/2) - 100),
-                    new Point(getWidth(),getHeight()), new Point(getWidth(), (getHeight()/2) - 100), new Point((getWidth()/2) + 20, (getHeight()/2) - 100));
+            updateDimensions(0, 0, getWidth(), (getHeight() / 2) - 100,
+                    new Point(0, getHeight()), new Point(0, getHeight() / 2 - 100), new Point((getWidth() / 2) - 20, (getHeight() / 2) - 100),
+                    new Point(getWidth(), getHeight()), new Point(getWidth(), (getHeight() / 2) - 100), new Point((getWidth() / 2) + 20, (getHeight() / 2) - 100));
         }
-
     }
 
     public void updateFogSize(Integer width, Integer height){

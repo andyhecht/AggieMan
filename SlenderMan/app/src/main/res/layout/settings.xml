@@ -1,45 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="anh2772.slenderman.Settings"
     android:background="@drawable/darkness">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings"
-        android:textSize="30dp"
-        android:textColor="#000000"
-        android:id="@+id/settingsLabel"
-        android:layout_gravity="center_horizontal" />
-
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Augmented Reality"
-        android:textColor="#000000"
-        android:textSize="25dp"
-        android:id="@+id/augmentedReality"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal"
-        android:checked="false" />
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Easy Mode"
-        android:textColor="#000000"
-        android:textSize="25dp"
-        android:id="@+id/easyMode"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal"
-        android:checked="false" />
-
-
-    <ImageView
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/settings_toolbar"
         android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/staticImage"/>
+        android:weightSum="1"
+        android:background="@drawable/darkness"
+        android:gravity="center"
+        android:layout_below="@+id/settings_toolbar">
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Augmented Reality"
+            android:textColor="#000000"
+            android:textSize="25dp"
+            android:id="@+id/augmentedReality"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:checked="false" />
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Easy Mode"
+            android:textColor="#000000"
+            android:textSize="25dp"
+            android:id="@+id/easyMode"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:checked="false" />
 
 
-</LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/staticImage"/>
+
+
+    </LinearLayout>
+</RelativeLayout>

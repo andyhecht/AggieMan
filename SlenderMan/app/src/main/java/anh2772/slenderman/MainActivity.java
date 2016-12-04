@@ -26,11 +26,15 @@ public class MainActivity extends AppCompatActivity {
     private int i;
     private MediaPlayer player;
     ImageView staticImage;
+    private Boolean ar;
+    private Boolean easy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ar = false;
+        easy = false;
 
         startGame = (Button)findViewById(R.id.startGame);
         continueGame = (Button)findViewById(R.id.continueGame);
@@ -46,9 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 if(hasBeenStarted){
                     playGame();
                 }else{
-//                    Toast.makeText(getApplicationContext(), "Please start a new game.", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(getApplicationContext(),Augmented.class);
-                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Please start a new game.", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -61,10 +63,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void playGame(){
-        Intent intent = new Intent(getApplicationContext(),Game.class);
-//        Bundle myExtras = new Bundle();
-//        myExtras.putString("callingActivity", "haaaaaaaaaaaaay");
-//        intent.putExtras(myExtras);
+        Intent intent = new Intent();
+        if (!ar) {
+            intent = new Intent(getApplicationContext(), Game.class);
+        }else{
+            intent = new Intent(getApplicationContext(), Augmented.class);
+        }
+
         startActivity(intent);
     }
 
@@ -82,7 +87,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 startStaticNoise(new Timer());
                 Intent intent = new Intent(getApplicationContext(),Settings.class);
-                startActivity(intent);
+                Bundle extras = new Bundle();
+                extras.putBoolean("easy", this.easy);
+                extras.putBoolean("ar", this.ar);
+                intent.putExtra("callingSetting", extras);
+                final int result = 1;
+                startActivityForResult(intent, result);
                 break;
         }
 
@@ -120,6 +130,23 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 80,80);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Bundle extras;
+        Integer call = data.getIntExtra("intent", 0);
+        System.out.println("call = " + call);
+        if(call == 0){
+            extras = data.getBundleExtra("settings");
+            easy = extras.getBoolean("easy", false);
+            ar = extras.getBoolean("ar", false);
+            System.out.println("easy = " + this.easy + ", ar = "+ this.ar);
+        }else if(call == 1){
+            extras = data.getBundleExtra("game");
+            System.out.println("Exited game.");
+        }
     }
 
 

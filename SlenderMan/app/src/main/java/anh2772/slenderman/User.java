@@ -80,6 +80,7 @@ public class User extends Player{
         createMarker("Marker in Austin", "person");
         gMap.animateCamera(CameraUpdateFactory.newLatLngZoom
                 (this.m.getPosition(), this.zoom));
+        this.m.setVisible(false);
 
         // set user movement buttons to listen for touches/presses
         setMovementTouchListeners();

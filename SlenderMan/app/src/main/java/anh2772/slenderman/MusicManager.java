@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -44,6 +45,8 @@ public class MusicManager {
         player = MediaPlayer.create(main.getApplicationContext(), R.raw.staticnoise);
         player.setLooping(false);
         player.start();
+        ImageView user = (ImageView) g.findViewById(R.id.person);
+        user.setVisibility(View.INVISIBLE);
 
         timer.schedule(new TimerTask() {
             @Override
@@ -56,6 +59,8 @@ public class MusicManager {
                             timer.cancel();
                             timer.purge();
                             staticImage.setBackgroundColor(Color.TRANSPARENT);
+                            ImageView user = (ImageView) g.findViewById(R.id.person);
+                            user.setVisibility(View.VISIBLE);
                             Toast.makeText(main.getApplicationContext(), "RUN!", Toast.LENGTH_LONG).show();
                             startGameMusic();
                             return;
@@ -79,6 +84,8 @@ public class MusicManager {
         player = MediaPlayer.create(main.getApplicationContext(), R.raw.scream);
         player.setLooping(false);
         player.start();
+        ImageView user = (ImageView) g.findViewById(R.id.person);
+        user.setVisibility(View.INVISIBLE);
 
         timer.schedule(new TimerTask() {
             @Override
