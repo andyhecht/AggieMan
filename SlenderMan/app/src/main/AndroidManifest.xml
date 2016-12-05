@@ -34,21 +34,23 @@
 
         <activity android:name=".Game"
             android:label="Play Game"
-            >
-        </activity>
-
+            />
         <activity android:name=".Settings"
             android:label="Settings"
-            >
-        </activity>
-
+            />
         <activity android:name=".Augmented"
             android:label="Augmented"
-            ></activity>
+            />
         <activity android:name=".Warning"
             android:label="Warning"
-            >
-        </activity>
+            />
+        <activity android:name=".LargeNoteDisplay"
+            android:label="LargeNoteDisplay"
+            />
+        <activity android:name=".NoteList"
+            android:label="NoteList"
+            />
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

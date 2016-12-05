@@ -1,8 +1,10 @@
 package anh2772.slenderman;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -55,6 +57,18 @@ public class Notes {
             Marker fake = setRandomNote(0.01);
             fake.setVisible(false);
         }
+
+        Button notesBut = (Button) a.findViewById(R.id.notes);
+        notesBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(a.getApplicationContext(), NoteList.class);
+                Bundle extras = new Bundle();
+                extras.putInt("num", collectedNotesCount);
+                intent.putExtra("note_list", extras);
+                a.startActivity(intent);
+            }
+        });
     }
 
     // will place a note randomly on the map given limit (the distance from the user)
@@ -136,28 +150,12 @@ public class Notes {
                 marker.setVisible(false);
                 collectedNotesCount += 1;
 
-                ImageView nIV = (ImageView) a.findViewById(R.id.large_note_image);
-                nIV.setImageResource(noteIDs[collectedNotesCount-1]);
-                LinearLayout n = (LinearLayout) a.findViewById(R.id.large_note_ll);
-                LinearLayout g = (LinearLayout) a.findViewById(R.id.game_rl);
-                Button nBut = (Button) a.findViewById(R.id.large_note_but);
-
-                g.setVisibility(View.GONE);
-                n.setVisibility(View.VISIBLE);
-
-                nBut.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        LinearLayout n = (LinearLayout) a.findViewById(R.id.large_note_ll);
-                        LinearLayout g = (LinearLayout) a.findViewById(R.id.game_rl);
-                        Button nBut = (Button) a.findViewById(R.id.large_note_but);
-
-                        nBut.setClickable(false);
-                        n.setVisibility(View.GONE);
-                        g.setVisibility(View.VISIBLE);
-                    }
-                });
+                Intent intent = new Intent(a.getApplicationContext(), LargeNoteDisplay.class);
+                Bundle extras = new Bundle();
+                extras.putInt("id", noteIDs[collectedNotesCount-1]);
+                extras.putInt("num", collectedNotesCount);
+                intent.putExtra("note", extras);
+                a.startActivity(intent);
 
                 Toast.makeText(a, "NOTE COLLECTED!", Toast.LENGTH_SHORT).show();
 
