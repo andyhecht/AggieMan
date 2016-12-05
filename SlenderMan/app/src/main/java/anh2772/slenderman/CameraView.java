@@ -15,9 +15,12 @@ import java.io.IOException;
 
 /**
  * Created by AndyHecht on 11/10/2016.
+ *
+ * Manages the camera view the Augmented Reality version of the game.
  */
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
+    // declare variables
     private SurfaceHolder mHolder;
     private android.hardware.Camera mCamera;
     protected Activity mActivity;

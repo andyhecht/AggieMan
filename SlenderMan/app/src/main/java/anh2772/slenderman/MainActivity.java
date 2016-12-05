@@ -17,34 +17,42 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/*
+ * Main activity for the app - displays splashview and allows user to play game or update settings
+ */
 public class MainActivity extends AppCompatActivity {
 
     //<https://pixabay.com/en/walkers-autumn-fog-man-human-mood-486583/>
-    Button startGame;
-    Button continueGame;
-    private boolean hasBeenStarted = false;
+    Button startGame; // new game button
+    Button continueGame; // continue game button
+    private boolean hasBeenStarted = false; // true if game has started
     private int i;
-    private MediaPlayer player;
-    ImageView staticImage;
-    private Boolean ar;
-    private Boolean easy;
+    private MediaPlayer player; // music player
+    ImageView staticImage; // for static animation
+    private Boolean ar; // true if augmented reality is enabled in settings
+    private Boolean easy; // true if easy mode is enabled in settings
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // initialized setting variables
         ar = false;
         easy = false;
 
         startGame = (Button)findViewById(R.id.startGame);
         continueGame = (Button)findViewById(R.id.continueGame);
 
+        // if new game button clicked, start new game
         startGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 hasBeenStarted = true;
                 playGame();
             }
         });
+
+        // if continue game button clicked, do nothing unless game has already been started
         continueGame.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(hasBeenStarted){
@@ -58,18 +66,24 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
+        // initialize music player and static animation
         staticImage = (ImageView)findViewById(R.id.staticImage);
         player = new MediaPlayer();
     }
 
     public void playGame(){
+
         Intent intent = new Intent();
+
+        // true if augmented reality disabled in settings
         if (!ar) {
+            // play 2d SlenderMan
             intent = new Intent(getApplicationContext(), Warning.class);
             Bundle extras = new Bundle();
             extras.putBoolean("easy", this.easy);
             intent.putExtra("game", extras);
         }else{
+            // play ar SlenderMan
             intent = new Intent(getApplicationContext(), Augmented.class);
         }
 
@@ -88,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // action with ID action_settings was selected
             case R.id.action_settings:
+
+                // if settings button clicked, go to the Settings activity
                 startStaticNoise(new Timer());
                 Intent intent = new Intent(getApplicationContext(),Settings.class);
                 Bundle extras = new Bundle();
@@ -102,18 +118,23 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // static animation
     public void startStaticNoise(final Timer timer){
         i = 0;
 
+        // plays static noise
         player.stop();
         player = MediaPlayer.create(getApplicationContext(), R.raw.staticnoise);
         player.setLooping(false);
         player.start();
 
+        // performs the actual static animation
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 runOnUiThread(new Runnable() {
+
+                    // switches back and forth between colors
                     @Override
                     public void run() {
                         if (i >= 10) {
@@ -141,12 +162,16 @@ public class MainActivity extends AppCompatActivity {
         Bundle extras;
         Integer call = data.getIntExtra("intent", 0);
         System.out.println("call = " + call);
+
+        // true if returning from setting activity
         if(call == 0){
+            // update setting variables
             extras = data.getBundleExtra("settings");
             easy = extras.getBoolean("easy", false);
             ar = extras.getBoolean("ar", false);
             System.out.println("easy = " + this.easy + ", ar = "+ this.ar);
         }else if(call == 1){
+            // game has ended, so do nothing for now.
             extras = data.getBundleExtra("game_over");
             System.out.println("Exited game.");
         }

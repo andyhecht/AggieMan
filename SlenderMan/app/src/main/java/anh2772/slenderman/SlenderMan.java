@@ -20,13 +20,14 @@ import java.util.Timer;
 public class SlenderMan extends Player{
 
     private Double sDist; // distance slenderman is from user
-    private User user;
-    private MusicManager mm;
+    private User user; // manages the user positioning and movement
+    private MusicManager mm; // manages the music of the game
     private Handler sHandler; // handler for moving slenderman
 
     // runnable for slenderman movement - moves random position every 2 seconds
     private Runnable sR = new Runnable() {
         @Override public void run() {
+            // update slenderman's position
             randomizeSlenderMan();
             if(sHandler != null) {
                 sHandler.postDelayed(this, 2000);
@@ -36,11 +37,14 @@ public class SlenderMan extends Player{
 
     public SlenderMan(Activity a, GoogleMap gMap, LatLng p, Game g){
         super(a, gMap, p, g);
+
+        // initialize variables
         this.sDist = 0.02;
         createMarker("Marker of slenderman", "slenderman");
         sHandler = new Handler();
     }
 
+    // add the music player and user to slenderman, needs to be called after SlenderMan created
     public void setManagers(User user, MusicManager mm){
         this.user = user;
         this.mm = mm;

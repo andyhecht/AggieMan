@@ -49,9 +49,12 @@ import java.util.TimerTask;
 
 /**
  * Created by AndyHecht on 11/10/2016.
+ *
+ * Runs the Augmented Reality version of SlenderMan
  */
 public class Augmented extends AppCompatActivity implements SensorEventListener, LocationListener {
 
+    // private variables for managing the game
     private Camera mCamera = null;
     private CameraView mCameraView = null;
     private ImageView sman;
@@ -102,22 +105,32 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.augmented_layout);
 
+        // manage location services
         isLocationOn = false;
         currentLocation = getLocation2();
 //        System.out.println("LOCATION: " + currentLocation.getLatitude() + " and " + currentLocation.getLongitude());
         startingLocation = currentLocation;
 
+        // get intent that called this activity
         Intent activityThatCalled = getIntent();
 
+
+        // add SlenderMan to surface view
         sman = (ImageView) findViewById(R.id.sman);
         sman.setBackgroundResource(R.drawable.slenderman);
 
+        // add note to surfaceview
         note = (ImageView) findViewById(R.id.note);
         note.setBackgroundResource(R.drawable.notes_small);
 
+        // number of notes collected
         noteCount = 0;
+
+        // when note will appear
         ttt = new Timer();
         noteTimer(ttt);
+
+        // collect note
         note.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,14 +150,17 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
             }
         });
 
+        // static animation
         staticImage = (ImageView) findViewById(R.id.staticImage);
 
+        // music player
         if(player != null)player.stop();
         if(player != null)player.release();
         player = MediaPlayer.create(getApplicationContext(), R.raw.music);
         player.setLooping(true);
         player.start();
 
+        // slenderMan timer
         tt = new Timer();
         slenderManTimer(tt);
 
@@ -155,6 +171,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
         r = new Random(); //set slenderman
         random = r.nextInt(320);
 
+        // get control of the camera.
         try {
             mCamera = Camera.open();//you can use open(int) to use different cameras
             Camera.Parameters parameters = mCamera.getParameters();
@@ -248,6 +265,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
         return location;
     }
 
+    // static animation
     private void startStatic(final Timer timer) {
         i = 0;
 
@@ -286,6 +304,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
         }, 80, 80);
     }
 
+    // timer for slenderman appearance
     private void slenderManTimer(final Timer timer) {
 
         int cnt = 0;
@@ -304,6 +323,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
         }, nextSman, 600000);
     }
 
+    // timer for note appearance
     private void noteTimer(final Timer timer) {
         timer.schedule(new TimerTask() {
             @Override
@@ -347,11 +367,13 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
             // get the angle around the z-axis rotated
             float degree = Math.round(event.values[0]);
 
+            // get distance
             if (isLocationOn) {
                 float distance = startingLocation.distanceTo(currentLocation);
 //            System.out.println("Distance: " + distance);
             }
 
+            // end game if won
             if (noteCount == 10) {
                 player.stop();
                 player.release();
@@ -365,6 +387,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
                 return;
             }
 
+            // if game not over and slenderman is close enough, you die
             if (nextSman <= 10000) {
                 t = new Timer();
                 startStatic(t);
@@ -382,6 +405,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
                 return;
             }
 
+            // if note timer goes off, note is ready to be visible
             if (noteReady && (degree >= rand) && (degree <= rand + 10)) {
 
                 if (ttt != null) ttt.cancel();
@@ -394,6 +418,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
                 note.setVisibility(View.INVISIBLE);
             }
 
+            // shows slenderman if turn in certain angle
             if (degree >= random && (degree <= random + 40) && showSman) {
                 sman.setImageAlpha(255);
                 sman.setVisibility(View.VISIBLE);
@@ -429,6 +454,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
         // not in use
     }
 
+    // ends the game
     public void endGame() {
         System.out.println("ended");
         if(t != null){

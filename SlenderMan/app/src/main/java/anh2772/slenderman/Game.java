@@ -25,12 +25,12 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
 
     protected GoogleMap gMap; // google map
 
-    private MusicManager mm;
-    private Notes notes;
-    private User user;
-    private SlenderMan sm;
-    private Controls c;
-    private Boolean easy;
+    private MusicManager mm; // music player
+    private Notes notes; // manages the notes
+    private User user; // manages the user positioning
+    private SlenderMan sm; // manages slenderman's movement and rendering
+    private Controls c; // manages the flashlight and user tools
+    private Boolean easy; // if on easy mode, the reduce number of notes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +51,11 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
         // Get the data that was sent
         Bundle callingBundle = activityThatCalled.getBundleExtra("game");
         if( callingBundle != null ) {
+            // easy mode
             this.easy = callingBundle.getBoolean("easy");
         }
 
+        // start music
         this.mm = new MusicManager(this, this);
         this.mm.startGameMusic();
     }
@@ -146,8 +148,11 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+
+        // update the map and notes object (returns true if last note is collected)
         Boolean isWinner = this.notes.onClick(marker);
         if(isWinner){
+            // end game and go back to splashscreen
             endGame();
         }
         return true;

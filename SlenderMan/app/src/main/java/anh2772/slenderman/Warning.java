@@ -15,24 +15,28 @@ import org.w3c.dom.Text;
 
 /**
  * Created by jason on 12/4/2016.
+ *
+ * activity for warning the user and displaying the instructions after the warning
  */
 
 public class Warning  extends AppCompatActivity {
 
-    private Boolean easy;
-    private Boolean warned;
+    private Boolean easy; // pass easy variable to the game after done warning and instructions
+    private Boolean warned; // user has been warned
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.warning_layout);
 
+        // allow the user to go back
         android.support.v7.app.ActionBar ab = getSupportActionBar();
         if(ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setHomeButtonEnabled(true);
         }
 
+        // hasn't been warned yet
         warned = false;
 
         // Get the Intent that called for this Activity to open
@@ -47,6 +51,7 @@ public class Warning  extends AppCompatActivity {
         Button exit = (Button) findViewById(R.id.warning_exit_but);
         Button play = (Button) findViewById(R.id.warning_play_but);
 
+        // go back to splashpage if user exits warning
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,9 +59,12 @@ public class Warning  extends AppCompatActivity {
             }
         });
 
+        // play the game if the user proceeds in caution
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // true if already warned, then start the game
                 if(warned) {
                     Intent intent = new Intent(getApplicationContext(), Game.class);
                     Bundle extras = new Bundle();
@@ -65,6 +73,7 @@ public class Warning  extends AppCompatActivity {
                     final int result = 1;
                     startActivityForResult(intent, result);
                 }else{
+                    // has just been warned, now display instructions and wait for user start game
                     warned = true;
                     TextView instructions = (TextView) findViewById(R.id.warning_text);
                     instructions.setText(getResources().getString(R.string.instructions));
@@ -89,6 +98,7 @@ public class Warning  extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // game is over, then return the results to the MainAcivity
         Intent intent = new Intent();
         Bundle extras = new Bundle();
         intent.putExtra("intent", 1);

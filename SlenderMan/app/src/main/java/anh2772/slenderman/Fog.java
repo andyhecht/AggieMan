@@ -13,9 +13,13 @@ import android.view.View;
 
 /**
  * Created by jason on 11/6/2016.
+ *
+ * Creates a fog around the user's view.
+ * Practically makes it seem like user has a flashlight
  */
 public class Fog extends View {
 
+    // declare variables for canvas drawing
     private Paint paint;
     private Integer width;
     private Integer height;
@@ -28,6 +32,7 @@ public class Fog extends View {
     private Handler fHandler;
     private Boolean started;
 
+    // makes the flashlight "run out of batteries" eventually
     private Runnable fR = new Runnable() {
         @Override public void run() {
             updateFlashLight(1);
@@ -39,6 +44,8 @@ public class Fog extends View {
 
     public Fog(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+
+        // initialize variables
         this.paint = new Paint();
         this.paint.setColor(Color.BLACK);
         this.paint.setStyle(Paint.Style.FILL);
@@ -59,9 +66,11 @@ public class Fog extends View {
     @Override
     public void onDraw(Canvas canvas) {
 
+        // draws the fog to hide everything behind the user
         System.out.println(dimensions[0] + " " + dimensions[1] + " " + dimensions[2] + " " + dimensions[3]);
         canvas.drawRect(dimensions[0], dimensions[1], dimensions[2], dimensions[3], paint);
 
+        // draws a triangle to hide one side of the user
         Path triangle1 = new Path();
         triangle1.setFillType(Path.FillType.EVEN_ODD);
         triangle1.moveTo(triangleDimension[0].x, triangleDimension[0].y);
@@ -74,6 +83,7 @@ public class Fog extends View {
         System.out.println(triangleDimension[4].x + " " + triangleDimension[4].y);
         System.out.println(triangleDimension[5].x + " " + triangleDimension[5].y);
 
+        // draws a triangle to hide the other side of the user
         Path triangle2 = new Path();
         triangle2.setFillType(Path.FillType.EVEN_ODD);
         triangle2.moveTo(triangleDimension[3].x, triangleDimension[3].y);
@@ -82,6 +92,7 @@ public class Fog extends View {
         triangle2.lineTo(triangleDimension[3].x, triangleDimension[3].y);
         triangle2.close();
 
+        // draws transparent shape that is the flashlight
         Path flashlight = new Path();
         flashlight.setFillType(Path.FillType.EVEN_ODD);
         flashlight.moveTo(triangleDimension[0].x, triangleDimension[0].y);
@@ -90,6 +101,7 @@ public class Fog extends View {
         flashlight.lineTo(triangleDimension[3].x, triangleDimension[3].y);
         flashlight.lineTo(triangleDimension[0].x, triangleDimension[0].y);
 
+        // draw the fogged sides and the flashlight
         canvas.drawPath(triangle1, paint);
         canvas.drawPath(triangle2, paint);
         canvas.drawPath(flashlight, flashlightPaint);
@@ -98,17 +110,18 @@ public class Fog extends View {
 
     }
 
-    private void drawFlashlight(){
-
-    }
-
     @Override
     public void onSizeChanged(int w, int h, int w0, int h0 ){
         super.onSizeChanged(w, h, w0, h0);
+
+        // update the dimensions of the flashlight
         updateFogPosition(0);
     }
 
+    // update the dimensions of the flashlight to reflect the user looking at a new direciton
     public void updateFogPosition(Integer orientation){
+
+        // direction the user is facing
         this.orientation = orientation;
 
         if(this.orientation == 0){
@@ -134,18 +147,23 @@ public class Fog extends View {
         }
     }
 
+    // update the width and height variables
     public void updateFogSize(Integer width, Integer height){
         this.width = width;
         this.height = height;
     }
 
+    // update the dimension variables to values
     public void updateDimensions(Integer left, Integer top, Integer right, Integer bottom,
                                  Point t1_a, Point t1_b, Point t1_c, Point t2_a, Point t2_b, Point t2_c){
+
+        // dimensions for fog behind
         this.dimensions[0] = left;
         this.dimensions[1] = top;
         this.dimensions[2] = right;
         this.dimensions[3] = bottom;
 
+        // dimensions for fog on sides
         this.triangleDimension[0] = t1_a;
         this.triangleDimension[1] = t1_b;
         this.triangleDimension[2] = t1_c;
@@ -155,6 +173,7 @@ public class Fog extends View {
 
     }
 
+    // update the transparency of the flashlight
     private void updateFlashLight(Integer increase){
         if(this.alpha <= 225) {
             this.alpha += increase;

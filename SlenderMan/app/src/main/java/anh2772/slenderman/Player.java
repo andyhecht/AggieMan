@@ -13,16 +13,19 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by jason on 11/8/2016.
+ *
+ * Parent class for managing a player in the game.
  */
 public class Player {
 
     protected Activity a;
-    protected GoogleMap gMap;
-    protected LatLng p;
-    protected Game g;
-    protected Marker m;
+    protected GoogleMap gMap; // google map of the game
+    protected LatLng p; // position of the player
+    protected Game g; // game object
+    protected Marker m; // marker of the player
 
     public Player(Activity a, GoogleMap gMap, LatLng p, Game g){
+        // initialize variables
         this.a = a;
         this.gMap = gMap;
         this.p = p;
@@ -30,10 +33,12 @@ public class Player {
     }
 
 
+    // returns the marker of the player
     public Marker getMarker(){
         return this.m;
     }
 
+    // creates a marker of the player and adds the marker ot the google map.
     protected void createMarker(String title, String image){
         this.m = gMap.addMarker(new MarkerOptions().position(p).title
                 (title).icon(BitmapDescriptorFactory.fromBitmap

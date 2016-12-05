@@ -22,25 +22,29 @@ public class MusicManager {
 
     private MediaPlayer player; // music player for the slenderman music
     private Activity main;
-    private Integer i;
-    private ImageView staticImage;
-    private Game g;
+    private Integer i; // for keeping track of static animation
+    private ImageView staticImage; // static animation view
+    private Game g; // game object, allows us to get access to game attributes and properties
 
     public MusicManager(Activity a, Game g){
+        // initialize variables
         this.main = a;
         staticImage = (ImageView) main.findViewById(R.id.staticImage);
         this.g = g;
     }
 
     public void startGameMusic(){
+        // start the overall creepy game music
         player = MediaPlayer.create(this.main, R.raw.music);
         player.setLooping(true);
         player.start();
     }
 
+    // does the static noise and animation
     public void startStaticNoise(final Timer timer){
         i = 0;
 
+        // play static noise
         player.stop();
         player = MediaPlayer.create(main.getApplicationContext(), R.raw.staticnoise);
         player.setLooping(false);
@@ -48,12 +52,14 @@ public class MusicManager {
         ImageView user = (ImageView) g.findViewById(R.id.person);
         user.setVisibility(View.INVISIBLE);
 
+        // play the static animation in the view
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 main.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        // end static noise and animation
                         if (i >= 10) {
                             player.stop();
                             timer.cancel();
@@ -65,6 +71,7 @@ public class MusicManager {
                             startGameMusic();
                             return;
                         }
+                        // switch between colors
                         if (i % 2 == 0) {
                             staticImage.setBackgroundColor(Color.WHITE);
                         } else {
@@ -77,9 +84,11 @@ public class MusicManager {
         }, 80,80);
     }
 
+    // end of game noise and animation
     public void startScreamingNoise(final Timer timer){
         i = 0;
 
+        // play screaming noise
         player.stop();
         player = MediaPlayer.create(main.getApplicationContext(), R.raw.scream);
         player.setLooping(false);
@@ -87,12 +96,14 @@ public class MusicManager {
         ImageView user = (ImageView) g.findViewById(R.id.person);
         user.setVisibility(View.INVISIBLE);
 
+        // play the static animation
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 main.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        // end screaming, animation, and game
                         if (i >= 30) {
                             timer.cancel();
                             timer.purge();
@@ -101,6 +112,7 @@ public class MusicManager {
                             Toast.makeText(main.getApplicationContext(), "You died...", Toast.LENGTH_LONG).show();
                             return;
                         }
+                        // switch between colors
                         if (i % 2 == 0) {
                             staticImage.setBackgroundColor(Color.WHITE);
                         } else {

@@ -21,19 +21,22 @@ import java.util.Random;
 
 /**
  * Created by jason on 11/7/2016.
+ *
+ * Manages the notes placement, collection, and display.
  */
 public class Notes {
 
-    private Marker[] notes;
+    private Marker[] notes; // positions and display of notes on map
     private Activity a;
-    private GoogleMap gMap;
-    private Marker uMarker;
-    private Marker sMarker;
-    private Integer collectedNotesCount;
-    private Integer maxNotes;
-    private Integer[] noteIDs;
+    private GoogleMap gMap; // google map of game
+    private Marker uMarker; // user position
+    private Marker sMarker; // slenderman position
+    private Integer collectedNotesCount; // number of notes the user has collected
+    private Integer maxNotes; // max number of notes the user can collect
+    private Integer[] noteIDs; // notes' resource ids
 
     public Notes(Activity a, GoogleMap gMap, Marker uMarker, Marker sMarker, Integer maxNotes){
+        // initiliaze the variables
         this.notes = new Marker[8];
         this.a = a;
         this.gMap = gMap;
@@ -46,6 +49,7 @@ public class Notes {
                 R.drawable.page_8};
     }
 
+    // generate the notes on the map - only display the red circle markers, hide the note markers
     public void generateNotes(){
         // populate map with notes at randomized positions
         for(int i = 0; i < this.maxNotes; i++){
@@ -53,15 +57,19 @@ public class Notes {
             notes[i].setVisible(false);
         }
 
+        // create locations that don't have notes
         for(int i = 0; i < this.maxNotes; i++){
             Marker fake = setRandomNote(0.01);
             fake.setVisible(false);
         }
 
+        // if the "Notes" button is clicked, display all of the notes collected
         Button notesBut = (Button) a.findViewById(R.id.notes);
         notesBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // create intent to display all of the notes
                 Intent intent = new Intent(a.getApplicationContext(), NoteList.class);
                 Bundle extras = new Bundle();
                 extras.putInt("num", collectedNotesCount);
@@ -87,14 +95,16 @@ public class Notes {
         Double latitude = uMarker.getPosition().latitude + rand.nextDouble()*limit*sign;
         Double longitude = uMarker.getPosition().longitude + rand.nextDouble()*limit*sign;
 
+        // adds a red marker exactly at same position as the note or fake note
         gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon
                 (BitmapDescriptorFactory.fromBitmap(resizeIcon("circle", 100, 100))));
 
-        // add note to map
+        // add note or fake note to map
         return gMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon
                 (BitmapDescriptorFactory.fromBitmap(resizeIcon("notes", 75, 75))));
     }
 
+    // checks to see if there is a note underneath the red circle.
     public Boolean checkNotes(Marker marker){
         Boolean real = false;
 
@@ -107,10 +117,12 @@ public class Notes {
         return real;
     }
 
+    // remove red marker and either display a note or show nothing at all
     public Integer revealIfNoteExists(Marker marker){
         Integer note = 0;
         Boolean real = false;
 
+        // check to see if the red circle contains a note underneath it
         for(int i = 0; i < notes.length; i++) {
             if(marker.getPosition().latitude == notes[i].getPosition().latitude &&
                     marker.getPosition().longitude == notes[i].getPosition().longitude){
@@ -120,7 +132,9 @@ public class Notes {
             }
         }
 
+        // make the red circle invisible
         marker.setVisible(false);
+        // true if note underneath red circle, then make note visible
         if(real){
             notes[note].setVisible(true);
             Toast.makeText(a, "FOUND NOTE!", Toast.LENGTH_SHORT).show();
@@ -139,9 +153,11 @@ public class Notes {
         // true if clicked on a note
         if(!this.uMarker.equals(marker) && !this.sMarker.equals(marker)) {
 
+            // distance of the note to the user
             Double distance = Math.pow(Math.pow(marker.getPosition().latitude - uMarker.getPosition().latitude, 2)
                     + Math.pow(marker.getPosition().longitude - uMarker.getPosition().longitude, 2), 0.5);
 
+            // displays a note if there is a note underneath the red circle
             Boolean real = checkNotes(marker);
 
             // true if note is close enough to collect
@@ -150,6 +166,7 @@ public class Notes {
                 marker.setVisible(false);
                 collectedNotesCount += 1;
 
+                // if note collected, then enlarge the note and show its context to the user
                 Intent intent = new Intent(a.getApplicationContext(), LargeNoteDisplay.class);
                 Bundle extras = new Bundle();
                 extras.putInt("id", noteIDs[collectedNotesCount-1]);
@@ -157,6 +174,7 @@ public class Notes {
                 intent.putExtra("note", extras);
                 a.startActivity(intent);
 
+                // tell the user he/she has collected a note
                 Toast.makeText(a, "NOTE COLLECTED!", Toast.LENGTH_SHORT).show();
 
                 // if all notes collected, end game - you win
@@ -165,6 +183,8 @@ public class Notes {
                     return true;
                 }
             } else if(distance <= 0.000413){
+                // if the marker clicked is not the physical note, then reveal the real note if
+                // there
                 revealIfNoteExists(marker);
             } else{
                 // note is too far away - let them know how far away it is.

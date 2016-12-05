@@ -1,42 +1,32 @@
 package anh2772.slenderman;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 /**
  * Created by AndyHecht on 11/8/2016.
+ *
+ * activity that allows the user to edit the settings of the game.
  */
 
 public class Settings extends AppCompatActivity {
 
-    TextView settingsLabel;
-    Switch augmentedReality;
-    Switch easyMode;
-    Boolean easy;
-    Boolean ar;
+    Switch augmentedReality; // switch to turn on or off augmented reality
+    Switch easyMode; // switch to turn on or off easy mode
+    Boolean easy; // true if easy mode on
+    Boolean ar; // true if augmented reality on
 
+    // different modes of difficulty (easy mode is what we have right now)
     String difficultyType[] = { "Easy", "Medium", "Hard"};
-    ArrayAdapter<String> adapterDifficulty;
+    ArrayAdapter<String> adapterDifficulty; // adapter for managing the different difficulty modes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +35,7 @@ public class Settings extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         setSupportActionBar(myToolbar);
 
+        // allow the user to go back to the previous activity that called this one
         android.support.v7.app.ActionBar ab = getSupportActionBar();
         if(ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
@@ -57,6 +48,7 @@ public class Settings extends AppCompatActivity {
         // Get the data that was sent
         Bundle callingBundle = activityThatCalled.getBundleExtra("callingSetting");
         if( callingBundle != null ) {
+            // initialize variables to reflect the game's current setting values
             easy = callingBundle.getBoolean("easy");
             ar = callingBundle.getBoolean("ar");
             System.out.println("easy = " + this.easy + ", ar = "+ this.ar);
@@ -65,8 +57,10 @@ public class Settings extends AppCompatActivity {
         augmentedReality = (Switch) findViewById(R.id.augmentedReality);
         easyMode = (Switch) findViewById(R.id.easyMode);
 
+        // update the setting switches to reflect the game's current setting values
         updateSwitches();
 
+        // if ar switch clicked on, update the ar variable
         augmentedReality.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
@@ -79,6 +73,8 @@ public class Settings extends AppCompatActivity {
                 }
             }
         });
+
+        // if easy mode switch is clicked on, update the easy mode variable
         easyMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
@@ -99,6 +95,8 @@ public class Settings extends AppCompatActivity {
         switch (item.getItemId()) {
             // action with ID action_settings was selected
             case android.R.id.home:
+
+                // if back button pressed, return to the activity that called this one
                 System.out.println("pushing home...");
                 Intent intent = new Intent();
                 Bundle extras = new Bundle();
@@ -115,6 +113,7 @@ public class Settings extends AppCompatActivity {
         }
     }
 
+    // update the setting switches to reflect the game's current setting values
     public void updateSwitches(){
         if(this.ar){
             this.augmentedReality.setChecked(true);

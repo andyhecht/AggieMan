@@ -20,15 +20,19 @@ import java.util.Timer;
  */
 public class Controls {
 
+    // declare Controls variables
     private Activity a;
-    private Fog fog;
+    private Fog fog; // makes it seem like the user is using a flashlight
 
     public Controls(Activity a){
         this.a = a;
+
+        // get fog object and render it
         this.fog = (Fog) this.a.findViewById(R.id.fog);
         this.fog.invalidate();
     }
 
+    // update the direction the flashlight is facing
     public void updateFog(Integer orientation){
         this.fog.updateFogPosition(orientation);
         this.fog.invalidate();

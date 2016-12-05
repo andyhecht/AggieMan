@@ -14,13 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +21,7 @@ import java.util.ArrayList;
  */
 public class DynamicAdapter extends RecyclerView.Adapter<DynamicAdapter.DynamicViewHolder>{
 
-    // reddit meta data
+    // note resource Ids
     private ArrayList<Integer> notes;
 
     // adapter constructor
@@ -36,14 +29,14 @@ public class DynamicAdapter extends RecyclerView.Adapter<DynamicAdapter.DynamicV
         notes = new ArrayList<>();
     }
 
+    // view holder, manages data for each row
     public class DynamicViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        // metadata
-        ImageView note;
-        TextView text;
-        View container;
-        Integer noteId;
-        Integer noteNum;
+        ImageView note; // note picture
+        TextView text; // note title text view
+        View container; // row
+        Integer noteId; // not resource Id
+        Integer noteNum; // note title
         private final Context context;
 
         // viewholder constructor
@@ -62,6 +55,7 @@ public class DynamicAdapter extends RecyclerView.Adapter<DynamicAdapter.DynamicV
         @Override
         public void onClick(View v) {
 
+            // if clicked, enlarge the note in a new view
             Intent intent = new Intent(v.getContext(), LargeNoteDisplay.class);
             Bundle extras = new Bundle();
             extras.putInt("id", noteId);
@@ -77,7 +71,7 @@ public class DynamicAdapter extends RecyclerView.Adapter<DynamicAdapter.DynamicV
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.note_row, parent, false);
 
-        // create view holder and set on click listener for One Post
+        // create view holder and set on click listener for the note row
         DynamicViewHolder dvh = new DynamicViewHolder(itemView);
         itemView.setOnClickListener(dvh);
 
@@ -88,7 +82,7 @@ public class DynamicAdapter extends RecyclerView.Adapter<DynamicAdapter.DynamicV
     @Override
     public void onBindViewHolder(DynamicAdapter.DynamicViewHolder holder, int position) {
 
-        // updates listview ImageView and TextView
+        // updates the view holder at this position
         Integer noteId = notes.get(position);
         String noteTitle = "Page " + (position + 1);
         holder.noteId = noteId;
@@ -97,11 +91,13 @@ public class DynamicAdapter extends RecyclerView.Adapter<DynamicAdapter.DynamicV
         holder.note.setImageResource(noteId);
     }
 
+    // returns number of notes collected
     @Override
     public int getItemCount() {
         return notes.size();
     }
 
+    // removes the note at this location
     public void remove(int position){
 
         // remove listview at position
@@ -111,6 +107,7 @@ public class DynamicAdapter extends RecyclerView.Adapter<DynamicAdapter.DynamicV
         notifyDataSetChanged();
     }
 
+    // adds a note to the note Id array
     public void add(Integer noteId){
         this.notes.add(noteId);
     }

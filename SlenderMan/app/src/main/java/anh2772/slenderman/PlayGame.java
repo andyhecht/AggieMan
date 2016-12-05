@@ -35,6 +35,10 @@ import java.util.TimerTask;
 
 /**
  * Created by AndyHecht on 10/23/2016.
+ *
+ * original one file game
+ *
+ * deprecated version of the game
  */
 
 public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
@@ -152,6 +156,7 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         //            text.setText(extra);
         }
 
+        // start music
         player = MediaPlayer.create(this, R.raw.music);
         player.setLooping(true);
         player.start();
@@ -489,6 +494,7 @@ public class PlayGame extends AppCompatActivity implements OnMapReadyCallback, G
         finish();
     }
 
+    // update the direction the flashlight is facing
     private void updateFog(Integer orientation){
         this.fog.updateFogPosition(orientation);
         this.fog.invalidate();
