@@ -10,6 +10,7 @@
             android:id="@+id/camera_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
         </FrameLayout>
 
     <ImageView android:layout_width="match_parent"
@@ -32,6 +33,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sman"
-        android:padding="20dp"/>
+        android:padding="20dp"
+       />
 
-</FrameLayout>
+
+    <ImageButton
+        android:layout_width="56dp"
+        android:layout_height="47dp"
+        android:id="@+id/imgClose"
+        android:src="@drawable/close"
+
+        android:layout_gravity="right|top" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noteList"
+        android:text="Note List"
+        android:layout_gravity="right|bottom" />
+
+    </FrameLayout>
