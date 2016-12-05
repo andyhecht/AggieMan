@@ -80,6 +80,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
     private boolean isGPSEnabled;
     private boolean isNetworkEnabled;
     private LocationListener locationListener;
+    private boolean isEnd = false;
 
 
     // The minimum distance to change Updates in meters
@@ -115,6 +116,8 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
         note.setBackgroundResource(R.drawable.notes_small);
 
         noteCount = 0;
+        ttt = new Timer();
+        noteTimer(ttt);
         note.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -254,8 +257,8 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
                     @Override
                     public void run() {
                         if (i >= 30) {
-                            timer.cancel();
-                            timer.purge();
+                            if(timer != null)timer.cancel();
+                            if(timer != null)timer.purge();
                             showSman = false;
                             staticImage.setVisibility(View.INVISIBLE);
                             count = 0;
@@ -307,7 +310,12 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        noteReady = true;
+                        System.out.println("Note Ready:" + noteReady);
+                        noteReady = !noteReady;
+                        timer.cancel();
+                        timer.purge();
+                        Timer newTimer = new Timer();
+                        noteTimer(newTimer);
                     }
                 });
             }
@@ -333,71 +341,85 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if (!isEnd) {
 
-        // get the angle around the z-axis rotated
-        float degree = Math.round(event.values[0]);
+            // get the angle around the z-axis rotated
+            float degree = Math.round(event.values[0]);
 
-        if(isLocationOn){
-            float distance = startingLocation.distanceTo(currentLocation);
-            System.out.println("Distance: " + distance);
-        }
+            if (isLocationOn) {
+                float distance = startingLocation.distanceTo(currentLocation);
+//            System.out.println("Distance: " + distance);
+            }
 
-        if (noteCount == 10) {
-            Toast.makeText(getApplicationContext(), "You won!", Toast.LENGTH_LONG).show();
-            endGame();
-            return;
-        }
-
-        if (nextSman <= 10000) {
-            player = MediaPlayer.create(getApplicationContext(), R.raw.scream);
-            player.setLooping(false);
-            player.start();
-
-            Toast.makeText(getApplicationContext(), "You died...", Toast.LENGTH_LONG).show();
-            endGame();
-            return;
-        }
-
-        if (noteReady && (degree >= rand) && (degree <= rand + 5)) {
-            noteReady = false;
-
-            ttt.cancel();
-            ttt.purge();
-            ttt = new Timer();
-            noteTimer(ttt);
-
-            note.setImageAlpha(255);
-            note.setVisibility(View.VISIBLE);
-        } else {
-            note.setVisibility(View.INVISIBLE);
-        }
-
-        if (degree >= random && (degree <= random + 40) && showSman) {
-            sman.setImageAlpha(255);
-            sman.setVisibility(View.VISIBLE);
-            if (count == 0) {
-                count++;
-
-                staticImage.setVisibility(View.VISIBLE);
-
+            if (noteCount == 10) {
                 player.stop();
                 player.release();
-                player = MediaPlayer.create(getApplicationContext(), R.raw.staticnoise);
+                player = MediaPlayer.create(getApplicationContext(), R.raw.cheering);
+                player.setLooping(false);
+                player.start();
+                Toast.makeText(getApplicationContext(), "You won!", Toast.LENGTH_LONG).show();
+                isEnd = true;
+                onPause();
+                endGame();
+                return;
+            }
+
+            if (nextSman <= 10000) {
+                t = new Timer();
+                startStatic(t);
+                player.stop();
+                player.release();
+                player = MediaPlayer.create(getApplicationContext(), R.raw.scream);
                 player.setLooping(false);
                 player.start();
 
-                i = 0;
-                t = new Timer();
-                startStatic(t);
+                Toast.makeText(getApplicationContext(), "You died...", Toast.LENGTH_LONG).show();
+                isEnd = true;
 
-                tt.cancel();
-                tt.purge();
-                tt = new Timer();
-                nextSman = (int) ((0.90) * nextSman);
-                slenderManTimer(tt);
+                onPause();
+                endGame();
+                return;
             }
-        } else {
-            sman.setVisibility(View.INVISIBLE);
+
+            if (noteReady && (degree >= rand) && (degree <= rand + 10)) {
+
+                if (ttt != null) ttt.cancel();
+                if (ttt != null) ttt.purge();
+
+
+                note.setImageAlpha(255);
+                note.setVisibility(View.VISIBLE);
+            } else {
+                note.setVisibility(View.INVISIBLE);
+            }
+
+            if (degree >= random && (degree <= random + 40) && showSman) {
+                sman.setImageAlpha(255);
+                sman.setVisibility(View.VISIBLE);
+                if (count == 0) {
+                    count++;
+
+                    staticImage.setVisibility(View.VISIBLE);
+
+                    player.stop();
+                    player.release();
+                    player = MediaPlayer.create(getApplicationContext(), R.raw.staticnoise);
+                    player.setLooping(false);
+                    player.start();
+
+                    i = 0;
+                    t = new Timer();
+                    startStatic(t);
+
+                    if (tt != null) tt.cancel();
+                    if (tt != null) tt.purge();
+                    tt = new Timer();
+                    nextSman = (int) ((0.90) * nextSman);
+                    slenderManTimer(tt);
+                }
+            } else {
+                sman.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -420,7 +442,8 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
             ttt.cancel();
             ttt.purge();
         }
-        player.stop();
+
+
         Toast.makeText(getApplicationContext(), "GAME ENDED!", Toast.LENGTH_LONG).show();
 //        // end intent/activity
 //        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
