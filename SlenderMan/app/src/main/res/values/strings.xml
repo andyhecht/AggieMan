@@ -3,4 +3,11 @@
     <string name="plus">+</string>
     <string name="minus">-</string>
     <string name="notes">Notes</string>
+    <string name="warning">Warning: If you have a medical condition that is triggered by flashing lights or quick movements,
+        either exit this game or proceed with caution.</string>
+    <string name="play">Play</string>
+    <string name="exit">Exit</string>
+    <string name="instructions">Objective: Gather all of the notes before SlenderMan catches you. You can find the notes in
+    the areas marked with a red circle.</string>
+    <string name="red_markings">Red Markings</string>
 </resources>

@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     public void playGame(){
         Intent intent = new Intent();
         if (!ar) {
-            intent = new Intent(getApplicationContext(), Game.class);
+            intent = new Intent(getApplicationContext(), Warning.class);
             Bundle extras = new Bundle();
             extras.putBoolean("easy", this.easy);
             intent.putExtra("game", extras);
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             ar = extras.getBoolean("ar", false);
             System.out.println("easy = " + this.easy + ", ar = "+ this.ar);
         }else if(call == 1){
-            extras = data.getBundleExtra("game");
+            extras = data.getBundleExtra("game_over");
             System.out.println("Exited game.");
         }
     }

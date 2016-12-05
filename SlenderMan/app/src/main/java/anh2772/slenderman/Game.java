@@ -170,6 +170,7 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
         this.sm.stopHandler();
 
         // end intent/activity
+        setResult(RESULT_OK);
         finish();
     }
 }

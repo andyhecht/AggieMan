@@ -34,10 +34,6 @@ public class Settings extends AppCompatActivity {
     Switch easyMode;
     Boolean easy;
     Boolean ar;
-    String diff;
-    MediaPlayer player;
-    ImageView staticImage;
-    int i;
 
     String difficultyType[] = { "Easy", "Medium", "Hard"};
     ArrayAdapter<String> adapterDifficulty;
@@ -58,10 +54,6 @@ public class Settings extends AppCompatActivity {
         // Get the Intent that called for this Activity to open
         Intent activityThatCalled = getIntent();
 
-        //play static
-        player = new MediaPlayer();
-        staticImage = (ImageView)findViewById(R.id.staticImage);
-
         // Get the data that was sent
         Bundle callingBundle = activityThatCalled.getBundleExtra("callingSetting");
         if( callingBundle != null ) {
@@ -69,11 +61,6 @@ public class Settings extends AppCompatActivity {
             ar = callingBundle.getBoolean("ar");
             System.out.println("easy = " + this.easy + ", ar = "+ this.ar);
         }
-
-//        settingsLabel = (TextView)findViewById(R.id.settingsLabel);
-//        SpannableString content = new SpannableString("Settings");
-//        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-//        settingsLabel.setText(content);
 
         augmentedReality = (Switch) findViewById(R.id.augmentedReality);
         easyMode = (Switch) findViewById(R.id.easyMode);
