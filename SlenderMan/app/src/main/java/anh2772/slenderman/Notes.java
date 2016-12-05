@@ -3,6 +3,10 @@ package anh2772.slenderman;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -24,24 +28,30 @@ public class Notes {
     private Marker uMarker;
     private Marker sMarker;
     private Integer collectedNotesCount;
+    private Integer maxNotes;
+    private Integer[] noteIDs;
 
-    public Notes(Activity a, GoogleMap gMap, Marker uMarker, Marker sMarker){
+    public Notes(Activity a, GoogleMap gMap, Marker uMarker, Marker sMarker, Integer maxNotes){
         this.notes = new Marker[8];
         this.a = a;
         this.gMap = gMap;
         this.uMarker = uMarker;
         this.sMarker = sMarker;
         this.collectedNotesCount = 0;
+        this.maxNotes = maxNotes;
+        noteIDs = new Integer[]{R.drawable.page_1, R.drawable.page_2,R.drawable.page_3,
+                R.drawable.page_4, R.drawable.page_5, R.drawable.page_6, R.drawable.page_7,
+                R.drawable.page_8};
     }
 
-    public void generateNotes(Integer noteCount){
+    public void generateNotes(){
         // populate map with notes at randomized positions
-        for(int i = 0; i < noteCount; i++){
+        for(int i = 0; i < this.maxNotes; i++){
             notes[i] = setRandomNote(0.01);
             notes[i].setVisible(false);
         }
 
-        for(int i = 0; i < noteCount; i++){
+        for(int i = 0; i < this.maxNotes; i++){
             Marker fake = setRandomNote(0.01);
             fake.setVisible(false);
         }
@@ -125,6 +135,30 @@ public class Notes {
                 // remove note update counter
                 marker.setVisible(false);
                 collectedNotesCount += 1;
+
+                ImageView nIV = (ImageView) a.findViewById(R.id.large_note_image);
+                nIV.setImageResource(noteIDs[collectedNotesCount-1]);
+                LinearLayout n = (LinearLayout) a.findViewById(R.id.large_note_ll);
+                LinearLayout g = (LinearLayout) a.findViewById(R.id.game_rl);
+                Button nBut = (Button) a.findViewById(R.id.large_note_but);
+
+                g.setVisibility(View.GONE);
+                n.setVisibility(View.VISIBLE);
+
+                nBut.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        LinearLayout n = (LinearLayout) a.findViewById(R.id.large_note_ll);
+                        LinearLayout g = (LinearLayout) a.findViewById(R.id.game_rl);
+                        Button nBut = (Button) a.findViewById(R.id.large_note_but);
+
+                        nBut.setClickable(false);
+                        n.setVisibility(View.GONE);
+                        g.setVisibility(View.VISIBLE);
+                    }
+                });
+
                 Toast.makeText(a, "NOTE COLLECTED!", Toast.LENGTH_SHORT).show();
 
                 // if all notes collected, end game - you win

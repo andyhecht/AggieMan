@@ -137,8 +137,8 @@ public class Game extends AppCompatActivity implements OnMapReadyCallback, Googl
         this.sm.setManagers(this.user, this.mm);
 
         // populate map with notes at randomized positions
-        this.notes = new Notes(this, this.gMap, this.user.getMarker(), this.sm.getMarker());
-        this.notes.generateNotes(noteCount);
+        this.notes = new Notes(this, this.gMap, this.user.getMarker(), this.sm.getMarker(), noteCount);
+        this.notes.generateNotes();
 
         // start slenderman movement
         this.sm.startHandler();
