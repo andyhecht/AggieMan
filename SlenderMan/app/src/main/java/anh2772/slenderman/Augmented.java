@@ -104,7 +104,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
 
         isLocationOn = false;
         currentLocation = getLocation2();
-        System.out.println("LOCATION: " + currentLocation.getLatitude() + " and " + currentLocation.getLongitude());
+//        System.out.println("LOCATION: " + currentLocation.getLatitude() + " and " + currentLocation.getLongitude());
         startingLocation = currentLocation;
 
         Intent activityThatCalled = getIntent();
@@ -122,6 +122,7 @@ public class Augmented extends AppCompatActivity implements SensorEventListener,
             @Override
             public void onClick(View v) {
                 if (note.isShown()) {
+                    noteReady = false;
                     noteCount++;
                     if (noteCount == 1) {
                         Toast.makeText(getApplicationContext(), noteCount + " NOTE COLLECTED!", Toast.LENGTH_SHORT).show();
